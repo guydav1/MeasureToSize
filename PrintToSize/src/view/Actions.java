@@ -165,7 +165,7 @@ public class Actions {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-//			controller.zoomIn();
+			controller.zoom(0.1);
 			
 		}
 		
@@ -183,7 +183,7 @@ public class Actions {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-//			controller.zoomOut();
+			controller.zoom(-0.1);
 			
 		}
 		
@@ -204,6 +204,25 @@ public class Actions {
 		public void actionPerformed(ActionEvent e) {
 //			controller.Move();
 			
+		}
+		
+	}
+	
+	
+	public static class RulerAction extends AbstractAction {
+		
+		private static final long serialVersionUID = 1L;
+		
+		public RulerAction() {
+			super("Ruler", new ImageIcon("src/resources/ruler_16px.png"));
+			putValue(SHORT_DESCRIPTION, "Measure distance");
+			
+			
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			controller.measure();
 		}
 		
 	}

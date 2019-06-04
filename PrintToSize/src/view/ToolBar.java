@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.Action;
@@ -16,6 +17,8 @@ public class ToolBar extends JToolBar {
 	public ToolBar(MainController controller) {
 		super("Tools");
 		this.controller = controller;
+		setBackground(new Color(0x2c3135));
+
 
 		createToolBar();
 	}
@@ -30,10 +33,12 @@ public class ToolBar extends JToolBar {
 		var zoomInButton = createButton(new Actions.ZoomInAction());
 		var zoomOutButton = createButton(new Actions.ZoomOutAction());
 		var moveButton = createButton(new Actions.MoveAction());
-
+		var rulerButton = createButton(new Actions.RulerAction());
+		
+		
 		addAll(fileButton, openButton, printButton);
 		addSeparator();
-		addAll(zoomInButton, zoomOutButton, moveButton);
+		addAll(zoomInButton, zoomOutButton, moveButton, rulerButton);
 
 	}
 
@@ -41,6 +46,7 @@ public class ToolBar extends JToolBar {
 		var button = new JButton(action);
 		button.setHideActionText(true);
 		button.setFocusPainted(false);
+		//button.setContentAreaFilled(false);
 		return button;
 	}
 

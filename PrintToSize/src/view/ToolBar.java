@@ -2,10 +2,15 @@ package view;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Paint;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
+import javax.swing.border.EtchedBorder;
 
 import controller.MainController;
 
@@ -18,6 +23,7 @@ public class ToolBar extends JToolBar {
 		super("Tools");
 		this.controller = controller;
 		setBackground(new Color(0x2c3135));
+		setBorder(BorderFactory.createEmptyBorder());
 
 
 		createToolBar();
@@ -46,7 +52,20 @@ public class ToolBar extends JToolBar {
 		var button = new JButton(action);
 		button.setHideActionText(true);
 		button.setFocusPainted(false);
-		//button.setContentAreaFilled(false);
+		button.setContentAreaFilled(false);
+		button.setBorderPainted(false);
+		button.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.darkGray), BorderFactory.createEmptyBorder(6, 6, 6, 6)));
+		button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				button.setBorderPainted(true);
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				button.setBorderPainted(false);
+			}
+		});
 		return button;
 	}
 

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -19,17 +20,31 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 	private static final long serialVersionUID = 1L;
 	BufferedImage image;
 
+	public Point origin; // TODO NOT PUBLIC
+	public Point end;
 
 	double scale;
+	public double realScale;
 	MainFrame main;
 
 	public ImagePanel(MainFrame mainf) {
+		super();
 
 		scale = 1.0;
 		setBackground(Color.black);
 		main = mainf;
 //		new ImageLoader(this, new File("src/resources/test_image.jpg")).execute();
 //		new ImageLoader(this, new File("src/resources/save_16px.png")).execute();
+
+	}
+
+	@Override
+	public void paint(Graphics g) {
+		super.paint(g);
+		if (origin != null && end != null) {
+			g.setColor(Color.red);
+			g.drawLine(origin.x, origin.y, end.x, end.y);
+		}
 	}
 
 	protected void paintComponent(Graphics g) {
@@ -82,13 +97,14 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 	@Override
 	public void imageLoaded(BufferedImage image) {
 		if (image.getWidth() > 800) scale = 1.0 / (image.getWidth() / 800); // HARD CODED
-		else scale = 1.0;
+		else
+			scale = 1.0;
 		this.image = image;
 		revalidate();
 		repaint();
 
 	}
-	
+
 	public BufferedImage getImage() {
 		return image;
 	}

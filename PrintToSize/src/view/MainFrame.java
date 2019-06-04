@@ -1,9 +1,14 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -15,7 +20,11 @@ public class MainFrame {
 
 	private JFrame frame;
 	private JPanel panel;
-
+	
+	private JPanel footer;
+	private JLabel footerLabel;
+	
+	
 	private Menu menu;
 	private JDialog aboutDialog;
 	private ToolBar toolBar;
@@ -27,11 +36,22 @@ public class MainFrame {
 		this.controller = controller;
 
 		frame = createFrame();
-
+		
 		menu = new Menu();
 		frame.setJMenuBar(menu);
 
 		panel = new JPanel(new BorderLayout());
+		
+		footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		footer.setBorder(BorderFactory.createEmptyBorder());
+		footer.setBackground(new Color(0x474747));
+		footer.setPreferredSize(new Dimension(0,25));
+		footerLabel = new JLabel();
+		footerLabel.setForeground(Color.white);
+		footer.add(footerLabel);
+		
+		
+		
 		toolBar = new ToolBar(controller);
 		
 		aboutDialog = new AboutDialog(frame);
@@ -39,6 +59,7 @@ public class MainFrame {
 
 		imagePanel = new ImagePanel(this);
 		imagePanelScrollPane = new JScrollPane(imagePanel);
+		imagePanelScrollPane.setBorder(BorderFactory.createEmptyBorder());
 		imagePanelScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 //		imagePanel.addMouseWheelListener(e -> {
 //			if (e.isAltDown()) {
@@ -65,6 +86,7 @@ public class MainFrame {
 
 		panel.add(toolBar, "North");
 		panel.add(imagePanelScrollPane, BorderLayout.CENTER);
+		panel.add(footer, "South");
 
 		frame.getContentPane().add(panel);
 
@@ -73,7 +95,6 @@ public class MainFrame {
 	public JFrame createFrame() {
 
 		var frame = new JFrame("Print to size");
-
 		frame.setJMenuBar(menu);
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -106,6 +127,20 @@ public class MainFrame {
 	public void setImagePanel(ImagePanel imagePanel) {
 		this.imagePanel = imagePanel;
 	}
+
+	public JPanel getPanel() {
+		return panel;
+	}
+
+	public JPanel getFooter() {
+		return footer;
+	}
+
+	public JLabel getFooterLabel() {
+		return footerLabel;
+	}
+	
+	
 	
 	
 

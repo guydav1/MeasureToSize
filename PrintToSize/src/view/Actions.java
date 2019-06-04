@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
@@ -157,7 +158,7 @@ public class Actions {
 		private static final long serialVersionUID = 1L;
 		
 		public ZoomInAction() {
-			super("Zoom In", new ImageIcon("src/resources/zoom_in_16px.png"));
+			super("Zoom In", new ImageIcon("src/resources/zoom_in_20px.png"));
 			putValue(SHORT_DESCRIPTION, "Zoom In");
 			
 			
@@ -175,7 +176,7 @@ public class Actions {
 		private static final long serialVersionUID = 1L;
 		
 		public ZoomOutAction() {
-			super("Zoom Out", new ImageIcon("src/resources/zoom_out_16px.png"));
+			super("Zoom Out", new ImageIcon("src/resources/zoom_out_20px.png"));
 			putValue(SHORT_DESCRIPTION, "Zoom Out");
 			
 			
@@ -194,7 +195,7 @@ public class Actions {
 		private static final long serialVersionUID = 1L;
 		
 		public MoveAction() {
-			super("Move", new ImageIcon("src/resources/move_16px.png"));
+			super("Move", new ImageIcon("src/resources/move_20px.png"));
 			putValue(SHORT_DESCRIPTION, "Move");
 			
 			
@@ -202,7 +203,8 @@ public class Actions {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-//			controller.Move();
+			controller.setCursor(Cursor.MOVE_CURSOR);
+			controller.move();
 			
 		}
 		
@@ -214,7 +216,7 @@ public class Actions {
 		private static final long serialVersionUID = 1L;
 		
 		public RulerAction() {
-			super("Ruler", new ImageIcon("src/resources/ruler_16px.png"));
+			super("Ruler", new ImageIcon("src/resources/ruler_20px.png"));
 			putValue(SHORT_DESCRIPTION, "Measure distance");
 			
 			
@@ -226,6 +228,26 @@ public class Actions {
 		}
 		
 	}
+	
+	public static class LineScaleAction extends AbstractAction {
+		
+		private static final long serialVersionUID = 1L;
+		
+		public LineScaleAction() {
+			super("By Line");
+			putValue(SHORT_DESCRIPTION, "Set the distance using a line");
+			
+			
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			controller.setScale(0);
+		}
+		
+	}
+	
+	
 	
 	
 	

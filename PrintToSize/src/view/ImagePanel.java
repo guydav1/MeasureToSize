@@ -9,6 +9,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -19,7 +20,9 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.SwingWorker;
 
 public class ImagePanel extends JPanel implements ImageConsumer {
@@ -34,13 +37,14 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 	private double realScale;
 	MainFrame main;
 
+	private boolean zoomIn = false;
+
 	public ImagePanel(MainFrame mainf) {
 		super();
 
 		scale = 1.0;
 		setBackground(Color.black);
 		main = mainf;
-
 		var zoomAdapter = new zoomListener();
 		addKeyListener(zoomAdapter);
 		addMouseListener(zoomAdapter);
@@ -182,14 +186,17 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		private Point origin;
 		private Cursor zoomInCursor = createCursor("src/resources/zoom_in_cursor.png");
 		private Cursor zoomOutCursor = createCursor("src/resources/zoom_out_cursor.png");
+		private boolean zoomIn = false;
+		private boolean zoomOut = false;
+		private boolean space = false;
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
 
-			if (e.isControlDown()) {
+			if (zoomIn) {
 				setScale(getScale() + getScale() / 5);
 			}
-			else if (e.isAltDown()) {
+			else if (zoomOut) {
 				setScale(getScale() - getScale() / 5);
 			}
 
@@ -198,7 +205,7 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			requestFocus();
-			if (e.isControlDown() && e.isAltDown()) {
+			if (zoomIn || zoomOut) {
 				origin = e.getPoint();
 			}
 //			else if (e.isControlDown()) {
@@ -211,7 +218,7 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			if (origin != null && e.isControlDown() && e.isAltDown()) {
+			if (origin != null && (zoomIn || zoomOut)) {
 				double xDrag = origin.x - e.getX();
 				origin = e.getPoint();
 				if (xDrag < 0) setCursor(zoomOutCursor);
@@ -230,12 +237,17 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 		@Override
 		public void keyPressed(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_SPACE) space = true;
+			if (e.isControlDown() && space && e.isAltDown()) {
 
-			if (e.isControlDown()) {
-				setCursor(zoomInCursor);
-			}
-			else if (e.isAltDown()) {
 				setCursor(zoomOutCursor);
+				zoomOut = true;
+				zoomIn = false;
+			}
+			else if (e.isControlDown() && space) {
+				setCursor(zoomInCursor);
+				zoomIn = true;
+				zoomOut = false;
 			}
 
 		}
@@ -243,14 +255,16 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		@Override
 		public void keyReleased(KeyEvent e) {
 
-			if (e.isControlDown()) {
+			if (e.getKeyCode() == KeyEvent.VK_SPACE) space = false;
+
+			if (e.isControlDown() && space) {
 				setCursor(zoomInCursor);
-			}
-			else if (e.isAltDown()) {
-				setCursor(zoomOutCursor);
+				zoomIn = true;
+				zoomOut = false;
 			}
 			else {
 				setCursor(Cursor.getDefaultCursor());
+				zoomOut = zoomIn = false;
 			}
 
 		}

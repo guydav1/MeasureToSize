@@ -20,11 +20,11 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 	private static final long serialVersionUID = 1L;
 	BufferedImage image;
 
-	public Point origin; // TODO NOT PUBLIC
-	public Point end;
+	private Point lineOrigin; // used to draw measure line.
+	private Point lineEnd;
 
-	double scale;
-	public double realScale;
+	private double scale;
+	private double realScale;
 	MainFrame main;
 
 	public ImagePanel(MainFrame mainf) {
@@ -38,15 +38,10 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 	}
 
-	@Override
-	public void paint(Graphics g) {
-		super.paint(g);
-		if (origin != null && end != null) {
-			g.setColor(Color.red);
-			g.drawLine(origin.x, origin.y, end.x, end.y);
-		}
-	}
 
+	
+	
+	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
@@ -70,8 +65,13 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 			g2.drawString(loadString, getWidth() / 2 - loadString.length() * 4, getHeight() / 2);
 		}
+		
+		if (lineOrigin != null && lineEnd != null) {
+			g.setColor(Color.red);
+			g.drawLine(lineOrigin.x, lineOrigin.y, lineEnd.x, lineEnd.y);
+		}
 	}
-
+	@Override
 	public Dimension getPreferredSize() {
 		int w = 1;
 		int h = 1;
@@ -96,7 +96,7 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 	@Override
 	public void imageLoaded(BufferedImage image) {
-		if (image.getWidth() > 800) scale = 1.0 / (image.getWidth() / 800); // HARD CODED
+		if (image.getWidth() > 800) scale = 1.0 / (image.getWidth() / 800.0); // HARD CODED
 		else
 			scale = 1.0;
 		this.image = image;
@@ -113,6 +113,45 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		return scale;
 	}
 
+	public Point getLineOrigin() {
+		return lineOrigin;
+	}
+
+
+
+
+	public void setLineOrigin(Point lineOrigin) {
+		this.lineOrigin = lineOrigin;
+	}
+
+
+
+
+	public Point getLineEnd() {
+		return lineEnd;
+	}
+
+
+
+
+	public void setLineEnd(Point lineEnd) {
+		this.lineEnd = lineEnd;
+	}
+
+
+
+
+	public double getRealScale() {
+		return realScale;
+	}
+
+
+
+
+	public void setRealScale(double realScale) {
+		this.realScale = realScale;
+	}
+
 	protected class ImageLoader extends SwingWorker<BufferedImage, BufferedImage> {
 
 		private ImageConsumer consumer;
@@ -126,11 +165,11 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		@Override
 		protected BufferedImage doInBackground() throws IOException {
 
-			BufferedImage picture = ImageIO.read(file);
-			return picture;
+			return ImageIO.read(file);
 
 		}
-
+		
+		@Override
 		protected void done() {
 			try {
 				BufferedImage img = get();

@@ -110,7 +110,7 @@ public class MainController {
 					int deltaY = origin.y - e.getY();
 					distanceInPixels = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
 
-					distance = distanceInPixels * imagePanel.realScale;
+					distance = distanceInPixels * (imagePanel.realScale / imagePanel.getScale());
 
 					imagePanel.end = e.getPoint();
 					imagePanel.repaint();
@@ -130,7 +130,7 @@ public class MainController {
 		String inputS = JOptionPane.showInputDialog(frame.getFrame(), "Measure in cm");
 		double input = (inputS == null) ? 0 : Double.parseDouble(inputS);
 
-		frame.getImagePanel().realScale = input / (pixels * frame.getImagePanel().getScale());
+		frame.getImagePanel().realScale = (input * frame.getImagePanel().getScale()) / pixels;
 
 	}
 

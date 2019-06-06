@@ -180,9 +180,20 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 	private class zoomListener extends MouseAdapter implements KeyListener {
 		private Point origin;
-		private Cursor zoomCursor = createCursor("src/resources/zoom_cursor.png");
 		private Cursor zoomInCursor = createCursor("src/resources/zoom_in_cursor.png");
 		private Cursor zoomOutCursor = createCursor("src/resources/zoom_out_cursor.png");
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+
+			if (e.isControlDown()) {
+				setScale(getScale() + getScale() / 5);
+			}
+			else if (e.isAltDown()) {
+				setScale(getScale() - getScale() / 5);
+			}
+
+		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -190,12 +201,12 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 			if (e.isControlDown() && e.isAltDown()) {
 				origin = e.getPoint();
 			}
-			else if (e.isControlDown()) {
-				setScale(getScale() + getScale() / 5);
-			}
-			else if (e.isAltDown()) {
-				setScale(getScale() - getScale() / 5);
-			}
+//			else if (e.isControlDown()) {
+//				setScale(getScale() + getScale() / 5);
+//			}
+//			else if (e.isAltDown()) {
+//				setScale(getScale() - getScale() / 5);
+//			}
 		}
 
 		@Override
@@ -203,6 +214,10 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 			if (origin != null && e.isControlDown() && e.isAltDown()) {
 				double xDrag = origin.x - e.getX();
 				origin = e.getPoint();
+				if (xDrag < 0) setCursor(zoomOutCursor);
+				else {
+					setCursor(zoomInCursor);
+				}
 				setScale(getScale() + xDrag / Math.max(image.getWidth(), image.getHeight()));
 			}
 
@@ -216,16 +231,10 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		@Override
 		public void keyPressed(KeyEvent e) {
 
-			if (e.isControlDown() && e.isAltDown()) {
-//				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-				setCursor(zoomCursor);
-			}
-			else if (e.isControlDown()) {
-//				setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+			if (e.isControlDown()) {
 				setCursor(zoomInCursor);
 			}
 			else if (e.isAltDown()) {
-//				setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
 				setCursor(zoomOutCursor);
 			}
 
@@ -234,14 +243,11 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		@Override
 		public void keyReleased(KeyEvent e) {
 
-			if (e.isControlDown() && e.isAltDown()) {
-//				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			}
-			else if (e.isControlDown()) {
-//				setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+			if (e.isControlDown()) {
+				setCursor(zoomInCursor);
 			}
 			else if (e.isAltDown()) {
-//				setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
+				setCursor(zoomOutCursor);
 			}
 			else {
 				setCursor(Cursor.getDefaultCursor());
@@ -252,7 +258,7 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		private Cursor createCursor(String path) {
 			Toolkit t1 = Toolkit.getDefaultToolkit();
 			Image img = t1.getImage(path);
-			Point point = new Point(16,16);
+			Point point = new Point(16, 16);
 
 			return t1.createCustomCursor(img, point, "Cursor");
 		}

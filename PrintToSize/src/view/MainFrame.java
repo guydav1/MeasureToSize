@@ -78,7 +78,7 @@ public class MainFrame implements Serializable{
 		panel.add(footer, "South");
 
 		frame.getContentPane().add(panel);
-
+		imagePanel.requestFocus();
 	}
 
 	public JFrame createFrame() {

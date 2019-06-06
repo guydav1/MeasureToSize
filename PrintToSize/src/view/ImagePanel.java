@@ -1,11 +1,18 @@
 package view;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -33,6 +40,11 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		scale = 1.0;
 		setBackground(Color.black);
 		main = mainf;
+
+		var zoomAdapter = new zoomListener();
+		addKeyListener(zoomAdapter);
+		addMouseListener(zoomAdapter);
+		addMouseMotionListener(zoomAdapter);
 		new ImageLoader(this, new File("src/resources/ruler.png")).execute();
 //		new ImageLoader(this, new File("src/resources/save_16px.png")).execute();
 
@@ -82,6 +94,8 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 	}
 
 	public void setScale(double s) {
+
+		if (s < 0.1) return;
 		scale = s;
 		revalidate(); // update the scroll pane
 		repaint();
@@ -135,8 +149,6 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		this.realScale = realScale;
 	}
 
-
-
 	protected class ImageLoader extends SwingWorker<BufferedImage, BufferedImage> {
 
 		private ImageConsumer consumer;
@@ -166,5 +178,85 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		}
 	}
 
+	private class zoomListener extends MouseAdapter implements KeyListener {
+		private Point origin;
+		private Cursor zoomCursor = createCursor("src/resources/zoom_cursor.png");
+		private Cursor zoomInCursor = createCursor("src/resources/zoom_in_cursor.png");
+		private Cursor zoomOutCursor = createCursor("src/resources/zoom_out_cursor.png");
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			requestFocus();
+			if (e.isControlDown() && e.isAltDown()) {
+				origin = e.getPoint();
+			}
+			else if (e.isControlDown()) {
+				setScale(getScale() + getScale() / 5);
+			}
+			else if (e.isAltDown()) {
+				setScale(getScale() - getScale() / 5);
+			}
+		}
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			if (origin != null && e.isControlDown() && e.isAltDown()) {
+				double xDrag = origin.x - e.getX();
+				origin = e.getPoint();
+				setScale(getScale() + xDrag / Math.max(image.getWidth(), image.getHeight()));
+			}
+
+		}
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+
+			if (e.isControlDown() && e.isAltDown()) {
+//				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				setCursor(zoomCursor);
+			}
+			else if (e.isControlDown()) {
+//				setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+				setCursor(zoomInCursor);
+			}
+			else if (e.isAltDown()) {
+//				setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
+				setCursor(zoomOutCursor);
+			}
+
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+
+			if (e.isControlDown() && e.isAltDown()) {
+//				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			}
+			else if (e.isControlDown()) {
+//				setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+			}
+			else if (e.isAltDown()) {
+//				setCursor(Cursor.getPredefinedCursor(Cursor.NW_RESIZE_CURSOR));
+			}
+			else {
+				setCursor(Cursor.getDefaultCursor());
+			}
+
+		}
+
+		private Cursor createCursor(String path) {
+			Toolkit t1 = Toolkit.getDefaultToolkit();
+			Image img = t1.getImage(path);
+			Point point = new Point(16,16);
+
+			return t1.createCustomCursor(img, point, "Cursor");
+		}
+
+	}
 
 }

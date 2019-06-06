@@ -224,7 +224,7 @@ public class Actions {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			controller.measure();
+			controller.measure(false);
 		}
 		
 	}
@@ -242,7 +242,7 @@ public class Actions {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			controller.setScale(0);
+			controller.measure(true);
 		}
 		
 	}

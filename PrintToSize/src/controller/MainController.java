@@ -74,9 +74,9 @@ public class MainController {
 
 	}
 
-	public void measure() {
+	public void measure(boolean setScale) {
 		var imagePanel = frame.getImagePanel();
-		frame.setFooterInfoLabel("Draw a line of a known measure");
+		frame.setFooterInfoLabel("Draw a line");
 		MouseAdapter f = new MouseAdapter() {
 			private Point origin;
 			private Point delta;
@@ -92,13 +92,14 @@ public class MainController {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
+				if (setScale) {
+					setScale(distanceInPixels);
 
-				setCursor(Cursor.DEFAULT_CURSOR);
-				imagePanel.removeMouseListener(this);
-				imagePanel.removeMouseMotionListener(this);
-				imagePanel.setLineEnd(null);
-				setScale(distanceInPixels);
-				frame.setFooterInfoLabel("");
+					imagePanel.removeMouseListener(this);
+					imagePanel.removeMouseMotionListener(this);
+					imagePanel.setLineEnd(null);
+					frame.setFooterInfoLabel("");
+				}
 
 			}
 
@@ -108,7 +109,7 @@ public class MainController {
 
 					int deltaX = origin.x - e.getX();
 					int deltaY = origin.y - e.getY();
-					distanceInPixels = Math.sqrt((double)(deltaX * deltaX) + (deltaY * deltaY));
+					distanceInPixels = Math.sqrt((double) (deltaX * deltaX) + (deltaY * deltaY));
 
 					distance = distanceInPixels * (imagePanel.getRealScale() / imagePanel.getScale());
 
@@ -127,8 +128,11 @@ public class MainController {
 
 	public void setScale(double pixels) {
 
-		String inputS = JOptionPane.showInputDialog(frame.getFrame(), "Measure in cm");
-		double input = (inputS == null) ? 0 : Double.parseDouble(inputS);
+		String inputS = JOptionPane.showInputDialog(frame.getFrame(), "Measure in cm", "Set Scale",
+				JOptionPane.PLAIN_MESSAGE);
+		if (inputS == null) return;
+
+		double input = Double.parseDouble(inputS);
 
 		frame.getImagePanel().setRealScale((input * frame.getImagePanel().getScale()) / pixels);
 

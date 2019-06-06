@@ -1,11 +1,14 @@
 package view;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -33,14 +36,11 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		scale = 1.0;
 		setBackground(Color.black);
 		main = mainf;
-//		new ImageLoader(this, new File("src/resources/test_image.jpg")).execute();
+		new ImageLoader(this, new File("src/resources/test_image.jpg")).execute();
 //		new ImageLoader(this, new File("src/resources/save_16px.png")).execute();
 
 	}
 
-
-	
-	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -65,12 +65,13 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 			g2.drawString(loadString, getWidth() / 2 - loadString.length() * 4, getHeight() / 2);
 		}
-		
+
 		if (lineOrigin != null && lineEnd != null) {
 			g.setColor(Color.red);
 			g.drawLine(lineOrigin.x, lineOrigin.y, lineEnd.x, lineEnd.y);
 		}
 	}
+
 	@Override
 	public Dimension getPreferredSize() {
 		int w = 1;
@@ -117,40 +118,27 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		return lineOrigin;
 	}
 
-
-
-
 	public void setLineOrigin(Point lineOrigin) {
 		this.lineOrigin = lineOrigin;
 	}
-
-
-
 
 	public Point getLineEnd() {
 		return lineEnd;
 	}
 
-
-
-
 	public void setLineEnd(Point lineEnd) {
 		this.lineEnd = lineEnd;
 	}
-
-
-
 
 	public double getRealScale() {
 		return realScale;
 	}
 
-
-
-
 	public void setRealScale(double realScale) {
 		this.realScale = realScale;
 	}
+
+
 
 	protected class ImageLoader extends SwingWorker<BufferedImage, BufferedImage> {
 
@@ -168,7 +156,7 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 			return ImageIO.read(file);
 
 		}
-		
+
 		@Override
 		protected void done() {
 			try {
@@ -180,5 +168,6 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 			}
 		}
 	}
+
 
 }

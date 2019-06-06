@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.io.Serializable;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
@@ -14,7 +15,9 @@ import javax.swing.JScrollPane;
 
 import controller.MainController;
 
-public class MainFrame {
+public class MainFrame implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	private MainController controller;
 
@@ -61,28 +64,7 @@ public class MainFrame {
 		imagePanelScrollPane = new JScrollPane(imagePanel);
 		imagePanelScrollPane.setBorder(BorderFactory.createEmptyBorder());
 		imagePanelScrollPane.getVerticalScrollBar().setUnitIncrement(16);
-//		imagePanel.addMouseWheelListener(e -> {
-//			if (e.isAltDown()) {
-//				double oldZoom = picturePanel.scale;
-//				double amount = Math.pow(1.02, e.getScrollAmount());
-//				if (e.getWheelRotation() > 0) {
-//					// zoom in (amount)
-//					picturePanel.setScale(oldZoom * amount);
-//				}
-//				else {
-//					// zoom out (amount)
-//					picturePanel.setScale(oldZoom / amount);
-//				}
-//			}
-//			else {
-//				// if alt isn't down then propagate event to scrollPane
-//
-//				// dispatchEvent(e);
-//			}
-//		});
 
-//		ImageZoom zoom = new ImageZoom(picturePanel);
-//		panel.add(zoom.getUIPanel(), "West");
 
 		panel.add(toolBar, "North");
 		panel.add(imagePanelScrollPane, BorderLayout.CENTER);
@@ -94,17 +76,17 @@ public class MainFrame {
 
 	public JFrame createFrame() {
 
-		var frame = new JFrame("Print to size");
-		frame.setJMenuBar(menu);
+		var f = new JFrame("Print to size");
+		f.setJMenuBar(menu);
 
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(800, 800);
-		frame.setResizable(false);
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.setSize(800, 800);
+		f.setResizable(false);
 
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
+		f.setLocationRelativeTo(null);
+		f.setVisible(true);
 
-		return frame;
+		return f;
 
 	}
 

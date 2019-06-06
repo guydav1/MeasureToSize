@@ -47,7 +47,7 @@ public class MainFrame implements Serializable{
 		panel = new JPanel(new BorderLayout());
 		
 		footer = new JPanel(new BorderLayout());
-		footer.setBorder(BorderFactory.createEmptyBorder());
+		footer.setBorder(BorderFactory.createEmptyBorder(0,3,0,3));
 		footer.setBackground(new Color(0x474747));
 		footer.setPreferredSize(new Dimension(0,25));
 		
@@ -57,7 +57,7 @@ public class MainFrame implements Serializable{
 		footerInfoLabel = new JLabel();
 		footerInfoLabel.setForeground(Color.white);
 		footer.add(footerValueLabel, "East");
-		footer.add(footerInfoLabel);
+		footer.add(footerInfoLabel, "West");
 		
 		
 		

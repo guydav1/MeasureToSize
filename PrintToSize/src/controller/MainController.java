@@ -86,7 +86,7 @@ public class MainController {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				origin = e.getPoint();
-				imagePanel.origin = origin;
+				imagePanel.setLineOrigin(origin);
 				frame.getFooterLabel().setText("");
 			}
 
@@ -96,9 +96,8 @@ public class MainController {
 				setCursor(Cursor.DEFAULT_CURSOR);
 				imagePanel.removeMouseListener(this);
 				imagePanel.removeMouseMotionListener(this);
-				imagePanel.end = null;
+				imagePanel.setLineEnd(null);
 				setScale(distanceInPixels);
-				// imagePanel.repaint();
 
 			}
 
@@ -108,11 +107,11 @@ public class MainController {
 
 					int deltaX = origin.x - e.getX();
 					int deltaY = origin.y - e.getY();
-					distanceInPixels = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
+					distanceInPixels = Math.sqrt((double)(deltaX * deltaX) + (deltaY * deltaY));
 
-					distance = distanceInPixels * (imagePanel.realScale / imagePanel.getScale());
+					distance = distanceInPixels * (imagePanel.getRealScale() / imagePanel.getScale());
 
-					imagePanel.end = e.getPoint();
+					imagePanel.setLineEnd(e.getPoint());
 					imagePanel.repaint();
 
 					frame.getFooterLabel().setText(String.format("%.2f", distance));
@@ -130,7 +129,7 @@ public class MainController {
 		String inputS = JOptionPane.showInputDialog(frame.getFrame(), "Measure in cm");
 		double input = (inputS == null) ? 0 : Double.parseDouble(inputS);
 
-		frame.getImagePanel().realScale = (input * frame.getImagePanel().getScale()) / pixels;
+		frame.getImagePanel().setRealScale((input * frame.getImagePanel().getScale()) / pixels);
 
 	}
 

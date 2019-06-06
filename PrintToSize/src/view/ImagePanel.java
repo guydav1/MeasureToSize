@@ -9,7 +9,6 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -20,9 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 import javax.swing.SwingWorker;
 
 public class ImagePanel extends JPanel implements ImageConsumer {
@@ -37,7 +34,6 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 	private double realScale;
 	MainFrame main;
 
-	private boolean zoomIn = false;
 
 	public ImagePanel(MainFrame mainf) {
 		super();

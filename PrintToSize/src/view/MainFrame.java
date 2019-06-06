@@ -125,7 +125,7 @@ public class MainFrame implements Serializable{
 		return footer;
 	}
 
-	public JLabel getFooterLabel() {
+	public JLabel getFooterValueLabel() {
 		return footerValueLabel;
 	}
 
@@ -133,6 +133,9 @@ public class MainFrame implements Serializable{
 		return footerInfoLabel;
 	}
 
+	public void setFooterValueLabel(String footerInfo) {
+		this.footerValueLabel.setText(footerInfo);
+	}
 	public void setFooterInfoLabel(String footerInfo) {
 		this.footerInfoLabel.setText(footerInfo);
 	}

@@ -236,6 +236,7 @@ public class Actions {
 		public LineScaleAction() {
 			super("By Line");
 			putValue(SHORT_DESCRIPTION, "Set the distance using a line");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl shift T"));
 			
 			
 		}

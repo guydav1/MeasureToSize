@@ -76,6 +76,11 @@ public class MainController {
 
 	public void measure(boolean setScale) {
 		var imagePanel = frame.getImagePanel();
+		if(imagePanel.getRealScale() == 0 && !setScale) {
+			frame.setFooterInfoLabel("Please set scale first (Ctrl+Shift+T)");
+			return;
+		}
+		
 		frame.setFooterInfoLabel("Draw a line");
 		MouseAdapter f = new MouseAdapter() {
 			private Point origin;
@@ -87,7 +92,7 @@ public class MainController {
 			public void mousePressed(MouseEvent e) {
 				origin = e.getPoint();
 				imagePanel.setLineOrigin(origin);
-				frame.getFooterLabel().setText("");
+				frame.getFooterValueLabel().setText("");
 			}
 
 			@Override
@@ -105,7 +110,7 @@ public class MainController {
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				if (origin != null) {
+				if (origin != null && (imagePanel.getRealScale() != 0 || setScale)) {
 
 					int deltaX = origin.x - e.getX();
 					int deltaY = origin.y - e.getY();
@@ -116,7 +121,7 @@ public class MainController {
 					imagePanel.setLineEnd(e.getPoint());
 					imagePanel.repaint();
 
-					frame.getFooterLabel().setText(String.format("%.2f", distance));
+					frame.setFooterValueLabel((String.format("%.2f", distance)));
 				}
 			}
 		};

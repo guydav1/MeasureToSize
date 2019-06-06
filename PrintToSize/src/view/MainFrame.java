@@ -25,7 +25,8 @@ public class MainFrame implements Serializable{
 	private JPanel panel;
 	
 	private JPanel footer;
-	private JLabel footerLabel;
+	private JLabel footerValueLabel;
+	private JLabel footerInfoLabel;
 	
 	
 	private Menu menu;
@@ -45,13 +46,19 @@ public class MainFrame implements Serializable{
 
 		panel = new JPanel(new BorderLayout());
 		
-		footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		footer = new JPanel(new BorderLayout());
 		footer.setBorder(BorderFactory.createEmptyBorder());
 		footer.setBackground(new Color(0x474747));
 		footer.setPreferredSize(new Dimension(0,25));
-		footerLabel = new JLabel();
-		footerLabel.setForeground(Color.white);
-		footer.add(footerLabel);
+		
+		footerValueLabel = new JLabel();
+		footerValueLabel.setForeground(Color.white);
+		
+		footerInfoLabel = new JLabel();
+		footerInfoLabel.setForeground(Color.white);
+		footer.add(footerValueLabel, "East");
+		footer.add(footerInfoLabel);
+		
 		
 		
 		
@@ -119,7 +126,19 @@ public class MainFrame implements Serializable{
 	}
 
 	public JLabel getFooterLabel() {
-		return footerLabel;
+		return footerValueLabel;
+	}
+
+	public JLabel getFooterInfoLabel() {
+		return footerInfoLabel;
+	}
+
+	public void setFooterInfoLabel(String footerInfo) {
+		this.footerInfoLabel.setText(footerInfo);
+	}
+
+	public void setFooter(JPanel footer) {
+		this.footer = footer;
 	}
 	
 	

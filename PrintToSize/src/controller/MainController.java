@@ -76,7 +76,7 @@ public class MainController {
 
 	public void measure() {
 		var imagePanel = frame.getImagePanel();
-		imagePanel.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+		frame.setFooterInfoLabel("Draw a line of a known measure");
 		MouseAdapter f = new MouseAdapter() {
 			private Point origin;
 			private Point delta;
@@ -98,6 +98,7 @@ public class MainController {
 				imagePanel.removeMouseMotionListener(this);
 				imagePanel.setLineEnd(null);
 				setScale(distanceInPixels);
+				frame.setFooterInfoLabel("");
 
 			}
 

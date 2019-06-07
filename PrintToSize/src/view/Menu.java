@@ -3,6 +3,7 @@ package view;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -11,6 +12,7 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -94,7 +96,9 @@ public class Menu extends JMenuBar {
 		var aboutMenuItem = createMenuItem(new Actions.AboutAction());
 
 		var minimizeButton = createFrameButton("-");
+		minimizeButton.addActionListener(e-> ((JFrame)getTopLevelAncestor()).setState(Frame.ICONIFIED));
 		var exitButton = createFrameButton("X");
+		exitButton.addActionListener(e-> System.exit(0));
 
 		// Other stuff with menu items
 

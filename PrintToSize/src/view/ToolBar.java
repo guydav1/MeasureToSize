@@ -7,8 +7,6 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import controller.MainController;
 
@@ -54,22 +52,18 @@ public class ToolBar extends JToolBar {
 		button.setFocusPainted(false);
 		button.setContentAreaFilled(false);
 		button.setBorder(border2);
-		button.getModel().addChangeListener(new ChangeListener() {
-
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				if (button.getModel().isRollover()) {
-					// Mouse is on top of the button
-					button.setBorder(border1);
-				}
-				else {
-					button.setBorder(border2);
-				}
-				if(button.getModel().isPressed()) {
-					button.setBorder(border2);
-				}
-
+		button.getModel().addChangeListener(e -> {
+			if (button.getModel().isRollover()) {
+				// Mouse is on top of the button
+				button.setBorder(border1);
 			}
+			else {
+				button.setBorder(border2);
+			}
+			if (button.getModel().isPressed()) {
+				button.setBorder(border2);
+			}
+
 		});
 		return button;
 

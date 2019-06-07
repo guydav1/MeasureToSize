@@ -20,20 +20,22 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
 
 public class ImagePanel extends JPanel implements ImageConsumer {
 
 	private static final long serialVersionUID = 1L;
-	BufferedImage image;
+	private transient BufferedImage image;
 
 	private Point lineOrigin; // used to draw measure line.
 	private Point lineEnd;
+	private Point zoomPosition;
 
 	private double scale;
 	private double realScale;
-	MainFrame main;
 
+	MainFrame main;
 
 	public ImagePanel(MainFrame mainf) {
 		super();
@@ -41,12 +43,11 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		scale = 1.0;
 		setBackground(Color.black);
 		main = mainf;
-		var zoomAdapter = new zoomListener();
+		var zoomAdapter = new ZoomListener();
 		addKeyListener(zoomAdapter);
 		addMouseListener(zoomAdapter);
 		addMouseMotionListener(zoomAdapter);
 		new ImageLoader(this, new File("src/resources/ruler.png")).execute();
-//		new ImageLoader(this, new File("src/resources/save_16px.png")).execute();
 
 	}
 
@@ -60,8 +61,16 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 			int h = getHeight();
 			int imageWidth = image.getWidth();
 			int imageHeight = image.getHeight();
-			double x = (w - scale * imageWidth) / 2;
-			double y = (h - scale * imageHeight) / 2;
+//			double x = (w - scale * imageWidth) / 2;
+//			double y = (h - scale * imageHeight) / 2;
+			double x, y;
+			if (zoomPosition == null) {
+				x = 0;
+				y = 0;
+			} else {
+				x = (w - scale * zoomPosition.x)/2;
+				y = (h - scale * zoomPosition.y)/2;
+			}
 			AffineTransform at = AffineTransform.getTranslateInstance(x, y);
 
 			at.scale(scale, scale);
@@ -108,7 +117,7 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 	@Override
 	public void imageLoaded(BufferedImage image) {
-		if (image.getWidth() > 800) scale = 1.0 / (image.getWidth() / 800.0); // HARD CODED
+		if (image.getWidth() > 800) scale = 1.0 / (image.getWidth() / 800.0); // TODO FIX HARD CODED
 		else
 			scale = 1.0;
 		this.image = image;
@@ -178,7 +187,7 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		}
 	}
 
-	private class zoomListener extends MouseAdapter implements KeyListener {
+	private class ZoomListener extends MouseAdapter implements KeyListener {
 		private Point origin;
 		private Cursor zoomInCursor = createCursor("src/resources/zoom_in_cursor.png");
 		private Cursor zoomOutCursor = createCursor("src/resources/zoom_out_cursor.png");
@@ -203,31 +212,22 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 			requestFocus();
 			if (zoomIn || zoomOut) {
 				origin = e.getPoint();
+				zoomPosition = origin;
 			}
-//			else if (e.isControlDown()) {
-//				setScale(getScale() + getScale() / 5);
-//			}
-//			else if (e.isAltDown()) {
-//				setScale(getScale() - getScale() / 5);
-//			}
+
 		}
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			if (origin != null && (zoomIn || zoomOut)) {
-				double xDrag = origin.x - e.getX();
+				int xDrag = origin.x - e.getX();
 				origin = e.getPoint();
 				if (xDrag < 0) setCursor(zoomOutCursor);
 				else {
 					setCursor(zoomInCursor);
 				}
-				setScale(getScale() + xDrag / Math.max(image.getWidth(), image.getHeight()));
+				setScale(getScale() + (double) xDrag / Math.max(image.getWidth(), image.getHeight()));
 			}
-
-		}
-
-		@Override
-		public void keyTyped(KeyEvent e) {
 
 		}
 
@@ -271,6 +271,11 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 			Point point = new Point(16, 16);
 
 			return t1.createCustomCursor(img, point, "Cursor");
+		}
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+			// do nothing
 		}
 
 	}

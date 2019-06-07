@@ -41,8 +41,10 @@ public class MainFrame implements Serializable{
 
 		frame = createFrame();
 		
+		
 		menu = new Menu();
 		frame.setJMenuBar(menu);
+		
 
 		panel = new JPanel(new BorderLayout());
 		
@@ -91,6 +93,7 @@ public class MainFrame implements Serializable{
 		f.setResizable(false);
 
 		f.setLocationRelativeTo(null);
+		f.setUndecorated(true);
 		f.setVisible(true);
 
 		return f;

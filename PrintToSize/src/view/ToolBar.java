@@ -2,15 +2,13 @@ package view;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Paint;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
-import javax.swing.border.EtchedBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import controller.MainController;
 
@@ -24,7 +22,6 @@ public class ToolBar extends JToolBar {
 		this.controller = controller;
 		setBackground(new Color(0x2c3135));
 		setBorder(BorderFactory.createEmptyBorder());
-
 
 		createToolBar();
 	}
@@ -40,8 +37,7 @@ public class ToolBar extends JToolBar {
 		var zoomOutButton = createButton(new Actions.ZoomOutAction());
 		var moveButton = createButton(new Actions.MoveAction());
 		var rulerButton = createButton(new Actions.RulerAction());
-		
-		
+
 		addAll(fileButton, openButton, printButton);
 		addSeparator();
 		addAll(zoomInButton, zoomOutButton, moveButton, rulerButton);
@@ -49,24 +45,34 @@ public class ToolBar extends JToolBar {
 	}
 
 	private JButton createButton(Action action) {
+		var border1 = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.darkGray),
+				BorderFactory.createEmptyBorder(6, 6, 6, 6));
+		var border2 = BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1),
+				BorderFactory.createEmptyBorder(6, 6, 6, 6));
 		var button = new JButton(action);
 		button.setHideActionText(true);
 		button.setFocusPainted(false);
 		button.setContentAreaFilled(false);
-		button.setBorderPainted(false);
-		button.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.darkGray), BorderFactory.createEmptyBorder(6, 6, 6, 6)));
-		button.addMouseListener(new MouseAdapter() {
+		button.setBorder(border2);
+		button.getModel().addChangeListener(new ChangeListener() {
+
 			@Override
-			public void mouseEntered(MouseEvent e) {
-				button.setBorderPainted(true);
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				button.setBorderPainted(false);
+			public void stateChanged(ChangeEvent e) {
+				if (button.getModel().isRollover()) {
+					// Mouse is on top of the button
+					button.setBorder(border1);
+				}
+				else {
+					button.setBorder(border2);
+				}
+				if(button.getModel().isPressed()) {
+					button.setBorder(border2);
+				}
+
 			}
 		});
 		return button;
+
 	}
 
 	private void addAll(Component... comp) {

@@ -98,13 +98,11 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		var g2 = (Graphics2D)g;
 		g.setColor(Color.lightGray);
 		for (double row = 0; row <= getHeight()+scale; row += scale) {
-			var line = new Line2D.Double(0, row, getWidth(), row);
-			g2.draw(line);
+			g2.draw(new Line2D.Double(0, row, getWidth(), row));
 
 		}
 		for (double col = 0; col <= getWidth()+scale; col += scale) {
-			var line = new Line2D.Double(col, 0, col, getHeight());
-			g2.draw(line);
+			g2.draw(new Line2D.Double(col, 0, col, getHeight()));
 		}
 	}
 

@@ -68,6 +68,9 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 			at.scale(scale, scale);
 			g2.drawRenderedImage(image, at);
+			if(scale>13) {
+				drawGrid(g);
+				}
 		}
 		else {
 			g2.setPaint(Color.white);
@@ -81,6 +84,7 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 			g.setColor(Color.red);
 			g.drawLine(lineOrigin.x, lineOrigin.y, lineEnd.x, lineEnd.y);
 		}
+		
 	}
 
 	@Override
@@ -117,6 +121,17 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		revalidate();
 		repaint();
 
+	}
+
+	private void drawGrid(Graphics g) {
+		g.setColor(Color.lightGray);
+		for (int row = 0; row < getHeight(); row += scale) {
+			g.drawLine(0, row, getWidth(), row);
+
+		}
+		for (int col = 0; col < getWidth(); col += scale) {
+			g.drawLine(col, 0, col, getHeight());
+		}
 	}
 
 	public BufferedImage getImage() {
@@ -214,7 +229,8 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 			if (zoomIn || zoomOut || SwingUtilities.isMiddleMouseButton(e)) {
 				origin = e.getPoint();
 				zoomPosition = origin;
-				if (SwingUtilities.isMiddleMouseButton(e) && !(zoomIn || zoomOut)) setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				if (SwingUtilities.isMiddleMouseButton(e) && !(zoomIn || zoomOut))
+					setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			}
 
 		}
@@ -229,16 +245,13 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 				else {
 					setCursor(zoomInCursor);
 				}
-				setScale(getScale() + (double) xDrag / Math.max(image.getWidth(), image.getHeight()));
-				
-				
+				setScale(getScale() + (double) xDrag / Math.min(image.getWidth(), image.getHeight()));
+
 //				var view = main.getImagePanelScrollPane().getViewport();
 //				var v = view.getViewRect();
 //				v.x = zoomPosition.x ;
 //
 //				scrollRectToVisible(v);
-				
-
 
 			}
 

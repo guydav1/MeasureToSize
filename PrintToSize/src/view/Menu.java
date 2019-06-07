@@ -13,6 +13,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -23,11 +24,13 @@ public class Menu extends JMenuBar {
 	private static final long serialVersionUID = 1L;
 	private Color textColor = new Color(0xd5d5d5);
 	private Color backgroundColor = new Color(0x474747);
+	
+	private JLabel titleLabel = new JLabel();
 
 	public Menu() {
 		super();
 		setBackground(backgroundColor);
-		setPreferredSize(new Dimension(0, 35));
+		setPreferredSize(new Dimension(0, 30));
 
 		UIManager.put("Menu.foreground", textColor);
 		UIManager.put("Menu.font", new Font("Arial", Font.PLAIN, 13));
@@ -94,11 +97,15 @@ public class Menu extends JMenuBar {
 
 		// Help Menu
 		var aboutMenuItem = createMenuItem(new Actions.AboutAction());
-
+		
+		//Frame controls
 		var minimizeButton = createFrameButton("-");
 		minimizeButton.addActionListener(e-> ((JFrame)getTopLevelAncestor()).setState(Frame.ICONIFIED));
 		var exitButton = createFrameButton("X");
 		exitButton.addActionListener(e-> System.exit(0));
+		
+		// Title Label
+		titleLabel.setForeground(textColor);
 
 		// Other stuff with menu items
 
@@ -129,6 +136,8 @@ public class Menu extends JMenuBar {
 		add(fileMenu);
 		add(toolsMenu);
 		add(helpMenu);
+		add(Box.createHorizontalGlue());
+		add(titleLabel);
 		add(Box.createHorizontalGlue()); 
 		add(minimizeButton);
 		add(exitButton);
@@ -167,6 +176,14 @@ public class Menu extends JMenuBar {
 		});
 		return button;
 
+	}
+	
+	public String getTitle() {
+		return titleLabel.getText();
+	}
+	
+	public void setTitle(String s) {
+		titleLabel.setText(s);
 	}
 
 }

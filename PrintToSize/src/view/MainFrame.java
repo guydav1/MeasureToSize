@@ -146,6 +146,10 @@ public class MainFrame implements Serializable{
 		this.footer = footer;
 	}
 	
+	public Menu getMenu() {
+		return menu;
+	}
+	
 	
 	
 	

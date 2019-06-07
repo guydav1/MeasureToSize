@@ -1,7 +1,6 @@
 package controller;
 
 import java.awt.Cursor;
-import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -41,8 +40,9 @@ public class MainController {
 		chooser.showOpenDialog(frame.getFrame());
 		File pic = chooser.getSelectedFile();
 		file = pic;
-		frame.getFrame().setTitle(DEFAULT_TITLE + " - (" + pic.getName() + ")");
-		((ImagePanel) frame.getImagePanel()).loadImage(pic);
+		frame.getMenu().setTitle(DEFAULT_TITLE + " - (" + pic.getName() + ")");
+		frame.getFrame().setTitle(pic.getName());
+		frame.getImagePanel().loadImage(pic);
 	}
 
 	public void openAboutDialog() {
@@ -55,6 +55,7 @@ public class MainController {
 
 	public void newFile() {
 		if (file == null) return;
+		frame.getMenu().setTitle(DEFAULT_TITLE);
 		frame.getFrame().setTitle(DEFAULT_TITLE);
 		file = null;
 		var image = frame.getImagePanel();
@@ -84,7 +85,6 @@ public class MainController {
 		frame.setFooterInfoLabel("Draw a line");
 		MouseAdapter f = new MouseAdapter() {
 			private Point origin;
-			private Point delta;
 			double distance;
 			double distanceInPixels;
 

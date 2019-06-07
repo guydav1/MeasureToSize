@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -57,7 +56,7 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
 		if (image != null) {
-			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+//			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 			int w = getWidth();
 			int h = getHeight();
 			int imageWidth = image.getWidth();
@@ -255,8 +254,7 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 			}
 
-			else if (!(zoomIn || zoomOut) && SwingUtilities.isMiddleMouseButton(e)) {
-				if (origin != null) {
+			else if (!(zoomIn || zoomOut) && SwingUtilities.isMiddleMouseButton(e) && origin != null) {
 					var view = main.getImagePanelScrollPane().getViewport();
 					if (view != null) {
 						int deltaX = origin.x - e.getX();
@@ -268,7 +266,6 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 						scrollRectToVisible(v);
 					}
-				}
 			}
 
 		}

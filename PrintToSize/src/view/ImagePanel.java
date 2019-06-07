@@ -230,13 +230,15 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 					setCursor(zoomInCursor);
 				}
 				setScale(getScale() + (double) xDrag / Math.max(image.getWidth(), image.getHeight()));
-				var view = main.getImagePanelScrollPane().getViewport();
+				
+				
+//				var view = main.getImagePanelScrollPane().getViewport();
+//				var v = view.getViewRect();
+//				v.x = zoomPosition.x ;
+//
+//				scrollRectToVisible(v);
+				
 
-				var v = view.getViewRect();
-				v.x += zoomPosition.x;
-				v.y += zoomPosition.y;
-
-				scrollRectToVisible(v);
 
 			}
 

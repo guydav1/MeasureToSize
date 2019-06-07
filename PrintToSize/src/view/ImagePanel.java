@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -20,7 +21,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 public class ImagePanel extends JPanel implements ImageConsumer {
@@ -61,16 +62,8 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 			int h = getHeight();
 			int imageWidth = image.getWidth();
 			int imageHeight = image.getHeight();
-//			double x = (w - scale * imageWidth) / 2;
-//			double y = (h - scale * imageHeight) / 2;
-			double x, y;
-			if (zoomPosition == null) {
-				x = 0;
-				y = 0;
-			} else {
-				x = (w - scale * zoomPosition.x)/2;
-				y = (h - scale * zoomPosition.y)/2;
-			}
+			double x = (w - scale * imageWidth) / 2;
+			double y = (h - scale * imageHeight) / 2;
 			AffineTransform at = AffineTransform.getTranslateInstance(x, y);
 
 			at.scale(scale, scale);
@@ -210,7 +203,7 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			requestFocus();
-			if (zoomIn || zoomOut) {
+			if (zoomIn || zoomOut || SwingUtilities.isMiddleMouseButton(e)) {
 				origin = e.getPoint();
 				zoomPosition = origin;
 			}
@@ -219,7 +212,10 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			if (origin != null && (zoomIn || zoomOut)) {
+
+
+
+			if (origin != null && (zoomIn || zoomOut) && SwingUtilities.isLeftMouseButton(e)) {
 				int xDrag = origin.x - e.getX();
 				origin = e.getPoint();
 				if (xDrag < 0) setCursor(zoomOutCursor);
@@ -227,6 +223,33 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 					setCursor(zoomInCursor);
 				}
 				setScale(getScale() + (double) xDrag / Math.max(image.getWidth(), image.getHeight()));
+				var horizon = main.getImagePanelScrollPane().getHorizontalScrollBar();
+				var extent = horizon.getModel().getExtent();
+
+				var nVal = extent + zoomPosition.x;
+
+				System.out.printf("Max %d\t Value %d\t zoomPos %d\t nVal %d\n", horizon.getMaximum(),
+						horizon.getValue() + extent, zoomPosition.x, nVal);
+
+				// horizon.setValue(nVal);
+
+			}
+			
+			else if (!(zoomIn || zoomOut) && SwingUtilities.isMiddleMouseButton(e)) {
+				if (origin != null) {
+					var view = main.getImagePanelScrollPane().getViewport();
+					if (view != null) {
+						int deltaX = origin.x - e.getX();
+                        int deltaY = origin.y - e.getY();
+                        
+                        
+                        Rectangle v = view.getViewRect();
+                        v.x += deltaX;
+                        v.y += deltaY;
+
+                        scrollRectToVisible(v);
+					}
+				}
 			}
 
 		}

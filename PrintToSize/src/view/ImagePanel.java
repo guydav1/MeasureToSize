@@ -190,14 +190,22 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-
-			if (zoomIn) {
-				setScale(getScale() + getScale() / 5);
+			if (SwingUtilities.isLeftMouseButton(e)) {
+				if (zoomIn) {
+					setScale(getScale() + getScale() / 5);
+				}
+				else if (zoomOut) {
+					setScale(getScale() - getScale() / 5);
+				}
 			}
-			else if (zoomOut) {
-				setScale(getScale() - getScale() / 5);
-			}
 
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			if (SwingUtilities.isMiddleMouseButton(e) && !(zoomIn || zoomOut)) {
+				setCursor(Cursor.getDefaultCursor());
+			}
 		}
 
 		@Override
@@ -206,14 +214,13 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 			if (zoomIn || zoomOut || SwingUtilities.isMiddleMouseButton(e)) {
 				origin = e.getPoint();
 				zoomPosition = origin;
+				if (SwingUtilities.isMiddleMouseButton(e) && !(zoomIn || zoomOut)) setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			}
 
 		}
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-
-
 
 			if (origin != null && (zoomIn || zoomOut) && SwingUtilities.isLeftMouseButton(e)) {
 				int xDrag = origin.x - e.getX();
@@ -223,31 +230,28 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 					setCursor(zoomInCursor);
 				}
 				setScale(getScale() + (double) xDrag / Math.max(image.getWidth(), image.getHeight()));
-				var horizon = main.getImagePanelScrollPane().getHorizontalScrollBar();
-				var extent = horizon.getModel().getExtent();
+				var view = main.getImagePanelScrollPane().getViewport();
 
-				var nVal = extent + zoomPosition.x;
+				var v = view.getViewRect();
+				v.x += zoomPosition.x;
+				v.y += zoomPosition.y;
 
-				System.out.printf("Max %d\t Value %d\t zoomPos %d\t nVal %d\n", horizon.getMaximum(),
-						horizon.getValue() + extent, zoomPosition.x, nVal);
-
-				// horizon.setValue(nVal);
+				scrollRectToVisible(v);
 
 			}
-			
+
 			else if (!(zoomIn || zoomOut) && SwingUtilities.isMiddleMouseButton(e)) {
 				if (origin != null) {
 					var view = main.getImagePanelScrollPane().getViewport();
 					if (view != null) {
 						int deltaX = origin.x - e.getX();
-                        int deltaY = origin.y - e.getY();
-                        
-                        
-                        Rectangle v = view.getViewRect();
-                        v.x += deltaX;
-                        v.y += deltaY;
+						int deltaY = origin.y - e.getY();
 
-                        scrollRectToVisible(v);
+						Rectangle v = view.getViewRect();
+						v.x += deltaX;
+						v.y += deltaY;
+
+						scrollRectToVisible(v);
 					}
 				}
 			}

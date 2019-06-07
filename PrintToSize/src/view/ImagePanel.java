@@ -54,61 +54,53 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		Graphics2D g2 = (Graphics2D) g;
 		if (image != null) {
-//			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-			int w = getWidth();
-			int h = getHeight();
-			int imageWidth = image.getWidth();
-			int imageHeight = image.getHeight();
-			double x = (w - scale * imageWidth) / 2;
-			double y = (h - scale * imageHeight) / 2;
-			AffineTransform at = AffineTransform.getTranslateInstance(x, y);
-
-			at.scale(scale, scale);
-			g2.drawRenderedImage(image, at);
-			if(scale>13) {
+			drawImage(g, image);
+			if (scale > 13) {
 				drawGrid(g);
-				}
+			}
 		}
 		else {
-			g2.setPaint(Color.white);
-
-			String loadString = "No image";
-
-			g2.drawString(loadString, getWidth() / 2 - loadString.length() * 4, getHeight() / 2);
+			drawString(g, "No Image Loaded");
 		}
 
 		if (lineOrigin != null && lineEnd != null) {
 			g.setColor(Color.red);
 			g.drawLine(lineOrigin.x, lineOrigin.y, lineEnd.x, lineEnd.y);
 		}
-		
+
 	}
 
-	@Override
-	public Dimension getPreferredSize() {
-		int w = 1;
-		int h = 1;
+	private void drawImage(Graphics g, BufferedImage image) {
+		var g2 = (Graphics2D) g;
+//		g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		int w = getWidth();
+		int h = getHeight();
+		int imageWidth = image.getWidth();
+		int imageHeight = image.getHeight();
+		double x = (w - scale * imageWidth) / 2;
+		double y = (h - scale * imageHeight) / 2;
+		AffineTransform at = AffineTransform.getTranslateInstance(x, y);
+
+		at.scale(scale, scale);
+		g2.drawRenderedImage(image, at);
+	}
+
+	private void drawString(Graphics g, String s) {
+		var g2 = (Graphics2D) g;
+		g2.setPaint(Color.white);
+
+		g2.drawString(s, getWidth() / 2 - s.length() * 4, getHeight() / 2);
+	}
+
+	public synchronized void loadImage(File fileName) {
 		if (image != null) {
-			w = (int) (scale * image.getWidth());
-			h = (int) (scale * image.getHeight());
+			setScale(1);
+			image = null;
+			repaint();
 		}
-
-		return new Dimension(w, h);
-	}
-
-	public void setScale(double s) {
-
-		if (s < 0.1) return;
-		scale = s;
-		revalidate(); // update the scroll pane
-		repaint();
-	}
-
-	public void loadImage(File fileName) {
-
 		new ImageLoader(this, fileName).execute();
+
 	}
 
 	@Override
@@ -131,6 +123,26 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		for (int col = 0; col < getWidth(); col += scale) {
 			g.drawLine(col, 0, col, getHeight());
 		}
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+		int w = 1;
+		int h = 1;
+		if (image != null) {
+			w = (int) (scale * image.getWidth());
+			h = (int) (scale * image.getHeight());
+		}
+
+		return new Dimension(w, h);
+	}
+
+	public void setScale(double s) {
+
+		if (s < 0.1 || s > main.getImagePanelScrollPane().getWidth()/15) return;
+		scale = s;
+		revalidate(); // update the scroll pane
+		repaint();
 	}
 
 	public BufferedImage getImage() {
@@ -238,34 +250,35 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		public void mouseDragged(MouseEvent e) {
 
 			if (origin != null && (zoomIn || zoomOut) && SwingUtilities.isLeftMouseButton(e)) {
-				int xDrag = origin.x - e.getX();
+				int xDrag =  e.getX() - origin.x;
 				origin = e.getPoint();
 				if (xDrag < 0) setCursor(zoomOutCursor);
 				else {
 					setCursor(zoomInCursor);
 				}
-				setScale(getScale() + (double) xDrag / Math.min(image.getWidth(), image.getHeight()));
+				System.out.println(Math.min(image.getWidth(), image.getHeight()));
+				setScale(getScale() + ((double) xDrag * Math.pow(Math.min(image.getWidth(), image.getHeight()), 0.35)) / Math.min(image.getWidth(), image.getHeight()));
 
-//				var view = main.getImagePanelScrollPane().getViewport();
-//				var v = view.getViewRect();
-//				v.x = zoomPosition.x ;
-//
-//				scrollRectToVisible(v);
+				// var view = main.getImagePanelScrollPane().getViewport();
+				// var v = view.getViewRect();
+				// v.x = zoomPosition.x ;
+				//
+				// scrollRectToVisible(v);
 
 			}
 
 			else if (!(zoomIn || zoomOut) && SwingUtilities.isMiddleMouseButton(e) && origin != null) {
-					var view = main.getImagePanelScrollPane().getViewport();
-					if (view != null) {
-						int deltaX = origin.x - e.getX();
-						int deltaY = origin.y - e.getY();
+				var view = main.getImagePanelScrollPane().getViewport();
+				if (view != null) {
+					int deltaX = origin.x - e.getX();
+					int deltaY = origin.y - e.getY();
 
-						Rectangle v = view.getViewRect();
-						v.x += deltaX;
-						v.y += deltaY;
+					Rectangle v = view.getViewRect();
+					v.x += deltaX;
+					v.y += deltaY;
 
-						scrollRectToVisible(v);
-					}
+					scrollRectToVisible(v);
+				}
 			}
 
 		}

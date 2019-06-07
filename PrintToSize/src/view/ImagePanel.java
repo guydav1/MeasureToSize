@@ -14,6 +14,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -93,6 +94,20 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		g2.drawString(s, getWidth() / 2 - s.length() * 4, getHeight() / 2);
 	}
 
+	private void drawGrid(Graphics g) {
+		var g2 = (Graphics2D)g;
+		g.setColor(Color.lightGray);
+		for (double row = 0; row <= getHeight()+scale; row += scale) {
+			var line = new Line2D.Double(0, row, getWidth(), row);
+			g2.draw(line);
+
+		}
+		for (double col = 0; col <= getWidth()+scale; col += scale) {
+			var line = new Line2D.Double(col, 0, col, getHeight());
+			g2.draw(line);
+		}
+	}
+
 	public synchronized void loadImage(File fileName) {
 		if (image != null) {
 			setScale(1);
@@ -114,16 +129,6 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 	}
 
-	private void drawGrid(Graphics g) {
-		g.setColor(Color.lightGray);
-		for (int row = 0; row < getHeight(); row += scale) {
-			g.drawLine(0, row, getWidth(), row);
-
-		}
-		for (int col = 0; col < getWidth(); col += scale) {
-			g.drawLine(col, 0, col, getHeight());
-		}
-	}
 
 	@Override
 	public Dimension getPreferredSize() {

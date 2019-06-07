@@ -20,10 +20,11 @@ public class Menu extends JMenuBar {
 
 	private static final long serialVersionUID = 1L;
 	private Color textColor = new Color(0xd5d5d5);
+	private Color backgroundColor = new Color(0x474747);
 
 	public Menu() {
 		super();
-		setBackground(new Color(0x474747));
+		setBackground(backgroundColor);
 		setPreferredSize(new Dimension(0, 35));
 
 		UIManager.put("Menu.foreground", textColor);
@@ -124,7 +125,7 @@ public class Menu extends JMenuBar {
 		add(fileMenu);
 		add(toolsMenu);
 		add(helpMenu);
-		add(Box.createHorizontalGlue());
+		add(Box.createHorizontalGlue()); 
 		add(minimizeButton);
 		add(exitButton);
 

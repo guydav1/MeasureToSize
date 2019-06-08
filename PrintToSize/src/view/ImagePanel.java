@@ -95,13 +95,13 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 	}
 
 	private void drawGrid(Graphics g) {
-		var g2 = (Graphics2D)g;
+		var g2 = (Graphics2D) g;
 		g.setColor(Color.lightGray);
-		for (double row = 0; row <= getHeight()+scale; row += scale) {
+		for (double row = 0; row <= getHeight() + scale; row += scale) {
 			g2.draw(new Line2D.Double(0, row, getWidth(), row));
 
 		}
-		for (double col = 0; col <= getWidth()+scale; col += scale) {
+		for (double col = 0; col <= getWidth() + scale; col += scale) {
 			g2.draw(new Line2D.Double(col, 0, col, getHeight()));
 		}
 	}
@@ -118,15 +118,21 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 	@Override
 	public void imageLoaded(BufferedImage image) {
-		if (image.getWidth() > 800) scale = 1.0 / (image.getWidth() / 800.0); // TODO FIX HARD CODED
-		else
+		var w = main.getImagePanelScrollPane().getWidth();
+		var h = main.getImagePanelScrollPane().getHeight();
+		var sMin = Math.min(w, h);
+		var iMax = Math.max(image.getWidth(), image.getHeight());
+		if (iMax > sMin) {
+			scale = 1.0 / ((double) iMax / sMin);
+		}
+		else {
 			scale = 1.0;
+		}
 		this.image = image;
 		revalidate();
 		repaint();
 
 	}
-
 
 	@Override
 	public Dimension getPreferredSize() {
@@ -142,7 +148,7 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 	public void setScale(double s) {
 
-		if (s < 0.1 || s > main.getImagePanelScrollPane().getWidth()/15) return;
+		if (s < 0.1 || s > main.getImagePanelScrollPane().getWidth() / 15) return;
 		scale = s;
 		revalidate(); // update the scroll pane
 		repaint();
@@ -216,6 +222,8 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		private boolean zoomIn = false;
 		private boolean zoomOut = false;
 		private boolean space = false;
+		private boolean ctrl = false;
+		private boolean alt = false;
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -232,45 +240,36 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (SwingUtilities.isMiddleMouseButton(e) && !(zoomIn || zoomOut)) {
-				setCursor(Cursor.getDefaultCursor());
-			}
+
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
 			requestFocus();
-			if (zoomIn || zoomOut || SwingUtilities.isMiddleMouseButton(e)) {
+			if (zoomIn || zoomOut || space) {
 				origin = e.getPoint();
 				zoomPosition = origin;
-				if (SwingUtilities.isMiddleMouseButton(e) && !(zoomIn || zoomOut))
-					setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			}
-
 		}
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
 
 			if (origin != null && (zoomIn || zoomOut) && SwingUtilities.isLeftMouseButton(e)) {
-				int xDrag =  e.getX() - origin.x;
+				int xDrag = e.getX() - origin.x;
 				origin = e.getPoint();
 				if (xDrag < 0) setCursor(zoomOutCursor);
 				else {
 					setCursor(zoomInCursor);
 				}
-				System.out.println(Math.min(image.getWidth(), image.getHeight()));
-				setScale(getScale() + ((double) xDrag * Math.pow(Math.min(image.getWidth(), image.getHeight()), 0.35)) / Math.min(image.getWidth(), image.getHeight()));
+				setScale(getScale() + ((double) xDrag * Math.pow(Math.min(image.getWidth(), image.getHeight()), 0.35))
+						/ Math.min(image.getWidth(), image.getHeight()));
 
-				// var view = main.getImagePanelScrollPane().getViewport();
-				// var v = view.getViewRect();
-				// v.x = zoomPosition.x ;
-				//
-				// scrollRectToVisible(v);
+				// TODO scale to mouse pointer.
 
 			}
 
-			else if (!(zoomIn || zoomOut) && SwingUtilities.isMiddleMouseButton(e) && origin != null) {
+			else if (!(zoomIn || zoomOut) && space && origin != null) {
 				var view = main.getImagePanelScrollPane().getViewport();
 				if (view != null) {
 					int deltaX = origin.x - e.getX();
@@ -288,17 +287,25 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 
 		@Override
 		public void keyPressed(KeyEvent e) {
+			ctrl = e.isControlDown();
+			alt = e.isAltDown();
 			if (e.getKeyCode() == KeyEvent.VK_SPACE) space = true;
-			if (e.isControlDown() && space && e.isAltDown()) {
+			
+
+			if (ctrl && space && alt) {
 
 				setCursor(zoomOutCursor);
 				zoomOut = true;
 				zoomIn = false;
 			}
-			else if (e.isControlDown() && space) {
+			else if (ctrl && space) {
 				setCursor(zoomInCursor);
 				zoomIn = true;
 				zoomOut = false;
+			}
+			else if(space) {
+				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				zoomOut = zoomIn = false;
 			}
 
 		}
@@ -306,12 +313,25 @@ public class ImagePanel extends JPanel implements ImageConsumer {
 		@Override
 		public void keyReleased(KeyEvent e) {
 
+			ctrl = e.isControlDown();
+			alt = e.isAltDown();
 			if (e.getKeyCode() == KeyEvent.VK_SPACE) space = false;
+			
 
-			if (e.isControlDown() && space) {
+			if (ctrl && space && alt) {
+				setCursor(zoomOutCursor);
+				zoomIn = false;
+				zoomOut = true;
+			}
+			else if(ctrl && space) {
 				setCursor(zoomInCursor);
 				zoomIn = true;
 				zoomOut = false;
+
+			}
+			else if(space) {
+				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				zoomOut = zoomIn = false;
 			}
 			else {
 				setCursor(Cursor.getDefaultCursor());

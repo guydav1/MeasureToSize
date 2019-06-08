@@ -77,11 +77,11 @@ public class MainController {
 
 	public void measure(boolean setScale) {
 		var imagePanel = frame.getImagePanel();
-		if(imagePanel.getRealScale() == 0 && !setScale) {
+		if (imagePanel.getRealScale() == 0 && !setScale) {
 			frame.setFooterInfoLabel("Please set scale first (Ctrl+Shift+T)");
 			return;
 		}
-		
+
 		frame.setFooterInfoLabel("Draw a line");
 		MouseAdapter f = new MouseAdapter() {
 			private Point origin;
@@ -91,6 +91,8 @@ public class MainController {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				origin = e.getPoint();
+				origin.x = (int) (origin.x - (origin.x % imagePanel.getScale()));
+				origin.y = (int) (origin.y - (origin.y % imagePanel.getScale()));
 				imagePanel.setLineOrigin(origin);
 				frame.getFooterValueLabel().setText("");
 			}
@@ -112,16 +114,23 @@ public class MainController {
 			public void mouseDragged(MouseEvent e) {
 				if (origin != null && (imagePanel.getRealScale() != 0 || setScale)) {
 
-					int deltaX = origin.x - e.getX();
-					int deltaY = origin.y - e.getY();
-					distanceInPixels = Math.sqrt((double) (deltaX * deltaX) + (deltaY * deltaY));
+					var end = e.getPoint();
+					
+					end.x = (int) (end.x - (end.x % imagePanel.getScale()));
+					end.y = (int) (end.y - (end.y % imagePanel.getScale()));
+
+					double deltaX = origin.getX() - end.getX();
+					double deltaY = origin.getY() - end.getY();
+					
+					
+					distanceInPixels = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
 
 					distance = distanceInPixels * (imagePanel.getRealScale() / imagePanel.getScale());
 
-					imagePanel.setLineEnd(e.getPoint());
+					imagePanel.setLineEnd(end);
 					imagePanel.repaint();
 
-					frame.setFooterValueLabel((String.format("%.2f", distance)));
+					frame.setFooterValueLabel((String.format("%.3f ( %.2f )", distance, distanceInPixels)));
 				}
 			}
 		};

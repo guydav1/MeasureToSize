@@ -105,7 +105,7 @@ public class MainController {
 					imagePanel.removeMouseListener(this);
 					imagePanel.removeMouseMotionListener(this);
 					imagePanel.setLineEnd(null);
-					frame.setFooterInfoLabel("");
+					//frame.setFooterInfoLabel("");
 				}
 
 			}
@@ -130,7 +130,7 @@ public class MainController {
 					imagePanel.setLineEnd(end);
 					imagePanel.repaint();
 
-					frame.setFooterValueLabel((String.format("%.3f ( %.2f )", distance, distanceInPixels)));
+					frame.setFooterValueLabel((String.format("%.2f ( %.2f ), Scale: %.2f", distance, distanceInPixels, imagePanel.getRealScale())));
 				}
 			}
 		};
@@ -144,11 +144,18 @@ public class MainController {
 
 		String inputS = JOptionPane.showInputDialog(frame.getFrame(), "Measure in cm", "Set Scale",
 				JOptionPane.PLAIN_MESSAGE);
-		if (inputS == null) return;
+		
+		try {
+			double input = Double.parseDouble(inputS);
+			
+			frame.getImagePanel().setRealScale((input * frame.getImagePanel().getScale()) / pixels);
+			frame.setFooterValueLabel("");
+			frame.setFooterInfoLabel("Scale set");
+		}
+		catch (Exception e) {
+			frame.setFooterInfoLabel("Invalid input");
+		}
 
-		double input = Double.parseDouble(inputS);
-
-		frame.getImagePanel().setRealScale((input * frame.getImagePanel().getScale()) / pixels);
 
 	}
 
